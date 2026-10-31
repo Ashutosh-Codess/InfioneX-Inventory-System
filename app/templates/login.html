@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login | InfioneX Inventory</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="login-page">
+    <div class="login-card">
+        <h1>Inventory Manager</h1>
+        <p>Sign in to your workspace</p>
+
+        {% if error %}
+        <div class="alert">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/login">
+            <label>Username</label>
+            <input name="username" required autocomplete="username">
+
+            <label>Password</label>
+            <input name="password" type="password" required
+                   autocomplete="current-password">
+
+            <button type="submit">Sign In</button>
+        </form>
+
+        <p class="hint">Initial Admin: admin / Admin@123</p>
+    </div>
+</body>
+</html>

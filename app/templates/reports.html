@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">Performance overview</p>
+      <h1>Sales reports</h1>
+      <p>Track sales activity across the current day, week, and month.</p>
+    </div>
+  </div>
+  <section class="report-grid">
+    <div class="stat-card"><span>Last 24 hours</span><strong>{{ today.count }}</strong><small>sales · ₹{{ "%.2f"|format(today.revenue) }}</small></div>
+    <div class="stat-card"><span>Last 7 days</span><strong>{{ week.count }}</strong><small>sales · ₹{{ "%.2f"|format(week.revenue) }}</small></div>
+    <div class="stat-card"><span>Last 30 days</span><strong>{{ month.count }}</strong><small>sales · ₹{{ "%.2f"|format(month.revenue) }}</small></div>
+  </section>
+  <section class="panel">
+    <h2>Recent sales</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Invoice</th><th>Date</th><th>Cashier</th><th>Total</th><th></th></tr></thead>
+        <tbody>
+        {% for sale in sales %}
+          <tr>
+            <td>#{{ sale.id }}</td>
+            <td>{{ sale.created_at.strftime("%d %b %Y, %H:%M") }}</td>
+            <td>{{ sale.cashier }}</td>
+            <td>₹{{ "%.2f"|format(sale.total) }}</td>
+            <td><a href="/invoices/{{ sale.id }}">View invoice</a></td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">No sales recorded in this period.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

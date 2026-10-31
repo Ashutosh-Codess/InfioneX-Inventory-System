@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard | InfioneX Inventory</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="topbar">
+        <div>
+            <h1>Inventory Manager</h1>
+            <span>Smart Inventory & Billing Management</span>
+        </div>
+        <div class="user-info">
+            {{ user.username }} · {{ user.role }}
+            <a href="/billing">Billing</a>
+            <a href="/reports">Reports</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="stats">
+            <div class="stat-card">
+                <span>Total Products</span>
+                <strong>{{ product_count }}</strong>
+            </div>
+            <div class="stat-card">
+                <span>Low Stock Alerts</span>
+                <strong class="warning">{{ low_stock_count }}</strong>
+            </div>
+        </section>
+
+        {% if error %}
+        <div class="alert">{{ error }}</div>
+        {% endif %}
+
+        {% if low_stock_products %}
+        <section class="low-stock-alert">
+            <strong>Low-stock alert</strong>
+            <span>{{ low_stock_count }} product{{ '' if low_stock_count == 1 else 's' }} need{{ '' if low_stock_count == 1 else 's' }} replenishment.</span>
+            <div class="alert-items">
+                {% for product in low_stock_products %}
+                <span>{{ product.name }}: {{ product.stock }} left</span>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if is_admin %}
+        <section class="panel">
+            <h2>Add Product</h2>
+            <form method="post" action="/products" class="product-form">
+                  <input name="name" placeholder="Product name" required maxlength="120" value="{{ form_data.get('name', '') }}">
+                  <input name="sku" placeholder="SKU" required maxlength="50" value="{{ form_data.get('sku', '') }}">
+                <input name="price" type="number" min="0" step="0.01"
+                      placeholder="Price (₹)" required value="{{ form_data.get('price', '') }}">
+                  <input name="stock" type="number" min="0"
+                     placeholder="Stock" required value="{{ form_data.get('stock', '') }}">
+                <button type="submit">Add Product</button>
+            </form>
+        </section>
+        {% endif %}
+
+        <section class="panel">
+            <h2>Products</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>SKU</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            {% if is_admin %}<th>Action</th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.sku }}</td>
+                            <td>₹{{ "%.2f"|format(product.price) }}</td>
+                            <td>{{ product.stock }}</td>
+                            <td>
+                                {% if product.stock <= 5 %}
+                                <span class="badge low">Low Stock</span>
+                                {% else %}
+                                <span class="badge good">In Stock</span>
+                                {% endif %}
+                            </td>
+                            {% if is_admin %}
+                            <td>
+                                <a class="button-link" href="/products/{{ product.id }}/edit">Edit</a>
+                                <form method="post"
+                                      action="/products/{{ product.id }}/delete"
+                                      onsubmit="return confirm('Delete this product?')">
+                                    <button class="danger" type="submit">Delete</button>
+                                </form>
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6">No products yet. Add your first product above.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

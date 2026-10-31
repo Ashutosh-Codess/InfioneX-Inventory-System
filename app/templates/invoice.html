@@ -1,0 +1,24 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h1>Invoice #{{ sale.id }}</h1>
+  <p><strong>Date:</strong> {{ sale.created_at.strftime("%d-%m-%Y %H:%M") }}</p>
+  <p><strong>Cashier:</strong> {{ sale.cashier }}</p>
+  <table>
+    <thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Amount</th></tr></thead>
+    <tbody>
+      {% for item in sale.items %}
+      <tr>
+        <td>{{ item.product_name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₹{{ "%.2f"|format(item.unit_price) }}</td>
+        <td>₹{{ "%.2f"|format(item.line_total) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <h2>Total: ₹{{ "%.2f"|format(sale.total) }}</h2>
+  <p><a href="/invoices/{{ sale.id }}/pdf">Download PDF invoice</a></p>
+  <p><a href="/billing">Create another sale</a> | <a href="/dashboard">Dashboard</a></p>
+</div>
+{% endblock %}

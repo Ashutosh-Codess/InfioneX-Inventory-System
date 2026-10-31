@@ -1,0 +1,24 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h1>Billing</h1>
+  <p>Create a sale and generate an invoice.</p>
+  {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+  {% if products %}
+  <form method="post" action="/billing" class="form-card">
+    <label for="product_id">Product</label>
+    <select id="product_id" name="product_id" required>
+      {% for product in products %}
+      <option value="{{ product.id }}">{{ product.name }} — SKU {{ product.sku }} — ₹{{ "%.2f"|format(product.price) }} (Stock: {{ product.stock }})</option>
+      {% endfor %}
+    </select>
+    <label for="quantity">Quantity</label>
+    <input id="quantity" type="number" name="quantity" min="1" value="1" required>
+    <button type="submit">Create Sale & Invoice</button>
+  </form>
+  {% else %}
+  <p>No products are currently in stock. Add stock from the dashboard first.</p>
+  {% endif %}
+  <p><a href="/dashboard">Back to dashboard</a></p>
+</div>
+{% endblock %}
